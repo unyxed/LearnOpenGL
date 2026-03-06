@@ -1,3 +1,2 @@
-*.exe
-.vscode/*
-src/*/*/app
+.vscode/
+build/
