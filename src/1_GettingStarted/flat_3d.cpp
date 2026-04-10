@@ -3,7 +3,7 @@
 #include <glm/trigonometric.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 
-#include "../include/shader.h"
+#include "../../include/shader.h"
 #include "stb_image.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -12,43 +12,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-// Callbacks and Handlers
-// ----------------------------
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void process_input(GLFWwindow *window);
-void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
-// ----------------------------
 
-// Window Settings
-// ----------------------------
 const unsigned int WINDOW_WIDTH  = 800;
 const unsigned int WINDWO_HEIGHT = 600;
-// ----------------------------
-
-// Camera
-// ----------------------------
-const float cameraSpeed = 0.5f;
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-// ----------------------------
-
-// Mouse
-// ----------------------------
-float lastX = WINDOW_WIDTH / 2;
-float lastY = WINDWO_HEIGHT /2;
-float yaw   = -90.0f;
-float pitch = 0.0f;
-float fov   = 45.0f;
-// ----------------------------
-
-// Time
-// ----------------------------
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
-float currentFrame;	
-// ----------------------------
 
 int main() {
 
@@ -63,7 +31,7 @@ int main() {
 #endif
 
   // glfw window creation 
-  GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDWO_HEIGHT, "LearnOpenGL", NULL, NULL);
+  GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDWO_HEIGHT, "Flat_3D", NULL, NULL);
   if (window == nullptr) {
     std::cerr << "Faild To Create GLFW Window" << std::endl;
     glfwTerminate();
@@ -72,10 +40,6 @@ int main() {
 
   glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	
-	// tell glfw to capture mouse input
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     std::cerr << "Faild To Initialize GLAD" << std::endl;
@@ -89,61 +53,12 @@ int main() {
 
   // vertex data 	
 	float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    };
-
-	glm::vec3 cubePositions[] = {
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(2.0f, 5.0f, -15.0f),
-			glm::vec3(-1.5f, -2.2f, -2.5f),
-			glm::vec3(-3.8f, -2.0f, -12.3f),
-			glm::vec3(2.4f, -0.4f, -3.5f),
-			glm::vec3(-1.7f, 3.0f, -7.5f),
-			glm::vec3(1.3f, -2.0f, -2.5f),
-			glm::vec3(1.5f, 2.0f, -2.5f),
-			glm::vec3(1.5f, 0.2f, -1.5f),
-			glm::vec3(-1.3f, 1.0f, -1.5f)
-		};
+		// coordinates      // colors          // texture coords
+		0.5f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  1.0f, 1.0f,         // top right
+		0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0, 0.0,           // bottom right
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,         // bottom left 
+		-0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f,         // top left
+	};
 
 	// indices
   unsigned int indices[] = {
@@ -174,19 +89,17 @@ int main() {
   // ----------------------------
   
   // position attribute
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
 
   // color attribute 
-  //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-  //glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+  glEnableVertexAttribArray(1);
 
   // texture coords
-  //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-  //glEnableVertexAttribArray(2);
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
   glEnableVertexAttribArray(2);
-  
+ 
   // ----------------------------
 
   // Load and Create Texture 
@@ -247,17 +160,10 @@ int main() {
   ourShader.use();  // must activate/use the shader before setting uniforms
   glUniform1i(glGetUniformLocation(ourShader.shader_program, "texture1"), 0);
   glUniform1i(glGetUniformLocation(ourShader.shader_program, "texture2"), 1);
-	
-	glEnable(GL_DEPTH_TEST);
 		
   // Render Loop
   // ----------------------------
   while (!glfwWindowShouldClose(window)) {
-		// Delta Time
-		currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-
     // process input
     process_input(window);
 
@@ -273,18 +179,27 @@ int main() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture2);
     
+		//glm::mat4 trans = glm::mat4(1.0f);
+    //trans = glm::rotate(trans, static_cast<float>(glfwGetTime()), glm::vec3(0.0f, 0.0f, 1.0f));
+    //trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+
     ourShader.use();
 		
 		glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(50.0f), (float)glfwGetTime() * glm::vec3(0.5f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0, 0.0f, 0.0f));
 		
 		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
+		
 		glm::mat4 projection = glm::mat4(1.0f);
 		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
+    //unsigned int transfomrLoc = glGetUniformLocation(ourShader.shader_program, "transform");
+    //glUniformMatrix4fv(transfomrLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		
+		unsigned int modelLoc = glGetUniformLocation(ourShader.shader_program, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		
 		unsigned int viewLoc = glGetUniformLocation(ourShader.shader_program, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
@@ -292,18 +207,9 @@ int main() {
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
     // render container
-		unsigned int modelLoc = glGetUniformLocation(ourShader.shader_program, "model");			
     glBindVertexArray(VAO);
-		for (unsigned int i{0}; i < 10; i++) {
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
@@ -325,49 +231,8 @@ int main() {
 void process_input(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos += cameraFront * cameraSpeed * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos -= cameraFront * cameraSpeed * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime;	
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) 
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		cameraPos += cameraUp * cameraSpeed * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) 
-		cameraPos -= cameraUp * cameraSpeed * deltaTime;
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
-}
-
-void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
-	float xoffset = xpos - lastX;
-	float yoffset = ypos - lastY;
-	lastX = xpos;
-	lastY = ypos;
-	
-	const float mouse_sensitivity = 0.1f;
-	xoffset *= mouse_sensitivity;
-	yoffset *= mouse_sensitivity;
-	
-	yaw += xoffset;
-	pitch += yoffset;
-
-	if (pitch > 89.0f) 
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-	
-	glm::vec3 front_direction;
-	front_direction.x = cos(glm::radians(yaw) * cos(glm::radians(pitch)));
-	front_direction.y = sin(glm::radians(pitch));
-	front_direction.z = sin(glm::radians(yaw) * cos(glm::radians(pitch)));
-	cameraFront = glm::normalize(front_direction); 
-}
-
-void scroll_callback(GLFWwindow *window, double xoffest, double yoffset) {
-	
 }

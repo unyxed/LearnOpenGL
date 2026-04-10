@@ -18,3 +18,33 @@ target_link_libraries(LearnOpenGL
     glm::glm
 		opengl32
 )
+
+add_executable(Cube src/1_GettingStarted/cube.cpp)
+
+target_link_libraries(Cube
+    PRIVATE
+    glfw
+    glad::glad
+    glm::glm
+		opengl32
+)
+
+add_executable(Flat_3D src/1_GettingStarted/flat_3d.cpp)
+
+target_link_libraries(Flat_3D
+    PRIVATE
+    glfw
+    glad::glad
+    glm::glm
+		opengl32
+)
+
+add_executable(Colors src/2_Lighting/colors.cpp)
+
+target_link_libraries(Colors
+    PRIVATE
+    glfw
+    glad::glad
+    glm::glm
+		opengl32
+)
