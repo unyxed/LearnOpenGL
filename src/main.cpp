@@ -1,9 +1,8 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/trigonometric.hpp>
-#define STB_IMAGE_IMPLEMENTATION
 
-#include "../include/shader.h"
+#include "shader.h"
 #include "stb_image.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -47,7 +46,7 @@ float fov   = 45.0f;
 // ----------------------------
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-float currentFrame;	
+float currentFrame;
 // ----------------------------
 
 int main() {
@@ -58,11 +57,11 @@ int main() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-#ifdef __APPLE__ 
+#ifdef __APPLE__
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPACT, GL_TRUE);
 #endif
 
-  // glfw window creation 
+  // glfw window creation
   GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDWO_HEIGHT, "LearnOpenGL", NULL, NULL);
   if (window == nullptr) {
     std::cerr << "Faild To Create GLFW Window" << std::endl;
@@ -73,7 +72,7 @@ int main() {
   glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
-	
+
 	// tell glfw to capture mouse input
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -87,7 +86,7 @@ int main() {
   Shader ourShader("../resources/shaders/vertex.vert", "../resources/shaders/fragment.frag");
   // ----------------------------
 
-  // vertex data 	
+  // vertex data
 	float vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
          0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -151,33 +150,33 @@ int main() {
     1, 2, 3, // second triangle
   };
 
-  // Vertex Buffer Object, Vertex Array Object, Element Buffer Object 
+  // Vertex Buffer Object, Vertex Array Object, Element Buffer Object
   // ----------------------------
 
   unsigned int VBO, VAO, EBO;
-  glGenVertexArrays(1, &VAO); 
+  glGenVertexArrays(1, &VAO);
 
-  glGenBuffers(1, &VBO); 
-  glGenBuffers(1, &EBO); 
+  glGenBuffers(1, &VBO);
+  glGenBuffers(1, &EBO);
 
-  glBindVertexArray(VAO); 
+  glBindVertexArray(VAO);
 
-  glBindBuffer(GL_ARRAY_BUFFER, VBO); 
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
   // ----------------------------
-  
-  // Configuring Vertex Attributes 
+
+  // Configuring Vertex Attributes
   // ----------------------------
-  
+
   // position attribute
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
 
-  // color attribute 
+  // color attribute
   //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
   //glEnableVertexAttribArray(1);
 
@@ -186,23 +185,23 @@ int main() {
   //glEnableVertexAttribArray(2);
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
   glEnableVertexAttribArray(2);
-  
+
   // ----------------------------
 
-  // Load and Create Texture 
+  // Load and Create Texture
   // ----------------------------
 
   unsigned int texture1, texture2;
-  
+
   // texture 1
-  glGenTextures(1, &texture1); 
-  glBindTexture(GL_TEXTURE_2D, texture1); 
+  glGenTextures(1, &texture1);
+  glBindTexture(GL_TEXTURE_2D, texture1);
 
   // setting texture "wrapping" parameters
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-  // setting texture "filtering" parameters 
+  // setting texture "filtering" parameters
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -247,9 +246,9 @@ int main() {
   ourShader.use();  // must activate/use the shader before setting uniforms
   glUniform1i(glGetUniformLocation(ourShader.shader_program, "texture1"), 0);
   glUniform1i(glGetUniformLocation(ourShader.shader_program, "texture2"), 1);
-	
+
 	glEnable(GL_DEPTH_TEST);
-		
+
   // Render Loop
   // ----------------------------
   while (!glfwWindowShouldClose(window)) {
@@ -261,24 +260,24 @@ int main() {
     // process input
     process_input(window);
 
-    // render 
+    // render
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // bind and activate textures 0
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture1); 
+    glBindTexture(GL_TEXTURE_2D, texture1);
 
-    // bind and activate texture 1 
+    // bind and activate texture 1
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture2);
-    
+
     ourShader.use();
-		
+
 		glm::mat4 model = glm::mat4(1.0f);
 		//model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0, 0.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(50.0f), (float)glfwGetTime() * glm::vec3(0.5f, 1.0f, 0.0f));
-		
+
 		glm::mat4 view = glm::mat4(1.0f);
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
@@ -292,18 +291,18 @@ int main() {
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
     // render container
-		unsigned int modelLoc = glGetUniformLocation(ourShader.shader_program, "model");			
+		unsigned int modelLoc = glGetUniformLocation(ourShader.shader_program, "model");
     glBindVertexArray(VAO);
 		for (unsigned int i{0}; i < 10; i++) {
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			
+
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-		
+
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
@@ -315,7 +314,7 @@ int main() {
   glDeleteVertexArrays(1, &VAO);
   glDeleteBuffers(1, &VBO);
   glDeleteBuffers(1, &EBO);
-  
+
   // ----------------------------
 
   glfwTerminate();
@@ -330,12 +329,12 @@ void process_input(GLFWwindow *window) {
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		cameraPos -= cameraFront * cameraSpeed * deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime;	
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) 
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		cameraPos += cameraUp * cameraSpeed * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) 
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		cameraPos -= cameraUp * cameraSpeed * deltaTime;
 }
 
@@ -348,26 +347,26 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
 	float yoffset = ypos - lastY;
 	lastX = xpos;
 	lastY = ypos;
-	
+
 	const float mouse_sensitivity = 0.1f;
 	xoffset *= mouse_sensitivity;
 	yoffset *= mouse_sensitivity;
-	
+
 	yaw += xoffset;
 	pitch += yoffset;
 
-	if (pitch > 89.0f) 
+	if (pitch > 89.0f)
 		pitch = 89.0f;
 	if (pitch < -89.0f)
 		pitch = -89.0f;
-	
+
 	glm::vec3 front_direction;
 	front_direction.x = cos(glm::radians(yaw) * cos(glm::radians(pitch)));
 	front_direction.y = sin(glm::radians(pitch));
 	front_direction.z = sin(glm::radians(yaw) * cos(glm::radians(pitch)));
-	cameraFront = glm::normalize(front_direction); 
+	cameraFront = glm::normalize(front_direction);
 }
 
 void scroll_callback(GLFWwindow *window, double xoffest, double yoffset) {
-	
+
 }
