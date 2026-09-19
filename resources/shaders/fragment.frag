@@ -4,7 +4,7 @@ out vec4 frag_color;
 
 in vec2 tex_coord;
 
-// texture sampler
+// texture sample
 uniform sampler2D texture1; 
 uniform sampler2D texture2; 
 

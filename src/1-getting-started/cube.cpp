@@ -3,8 +3,8 @@
 #include <glm/trigonometric.hpp>
 
 #include "shader.h"
-#include "stb_image.h"
-#include <glad/glad.h>
+#include <stb/stb_image.h>
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -40,19 +40,19 @@ int main() {
   glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+  if (!gladLoadGL((GLADloadfunc)glfwGetProcAddress)) {
     std::cerr << "Faild To Initialize GLAD" << std::endl;
     return -1;
   }
 
   // Build and Compiler Our Shader Program
   // ----------------------------
-  Shader ourShader("../resources/shaders/1_GettingStarted/cube_vertex.vert", "../resources/shaders/1_GettingStarted/cube_fragment.frag");
+  Shader ourShader(RESOURCE_DIR "shaders/1_getting_started/cube_vertex.vert", RESOURCE_DIR "shaders/1_getting_started/cube_fragment.frag");
   // ----------------------------
 
   // vertex data
 	float vertices[] = {
-				/* Vertex Coordinates */  /* Texture Coordinates*/
+		/* Vertex Coordinates */            /* Texture Coordinates */
         -0.5f, -0.5f, -0.5f,				0.0f, 0.0f,
          0.5f, -0.5f, -0.5f,				1.0f, 0.0f,
          0.5f,  0.5f, -0.5f,				1.0f, 1.0f,
@@ -155,7 +155,7 @@ int main() {
   int width, height, nr_channels;
   stbi_set_flip_vertically_on_load(true);
 
-  unsigned char *data = stbi_load("../resources/textures/container.jpg", &width, &height, &nr_channels, 0);
+  unsigned char *data = stbi_load(RESOURCE_DIR "textures/container.jpg", &width, &height, &nr_channels, 0);
   if (data) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -178,7 +178,7 @@ int main() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
   // load image, create texture, generate mipmaps
-  data = stbi_load("../resources/textures/awesomeface.png", &width, &height, &nr_channels, 0);
+  data = stbi_load(RESOURCE_DIR "textures/awesomeface.png", &width, &height, &nr_channels, 0);
   if (data) {
     // note that the awesomeface.png has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);

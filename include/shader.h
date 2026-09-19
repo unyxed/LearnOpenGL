@@ -1,7 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <ios>
 #include <string>
 #include <fstream>
@@ -12,7 +12,7 @@ class Shader {
   public:
     unsigned int shader_program;
 
-    // Constructor
+    // Constructo
     Shader(const char* vertex_shader_file_path, const char* fragment_shader_file_path) {
 
       // vertex/fragment shader source code (read from file)
@@ -52,7 +52,7 @@ class Shader {
       glCompileShader(vertex_shader); 
       checkCompileErrors(vertex_shader, "VERTEX");
 
-      // fragment shader
+      // fragment shade
       fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
       glShaderSource(fragment_shader, 1, &fragment_shader_csource_code, NULL);
       glCompileShader(fragment_shader);

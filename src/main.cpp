@@ -3,8 +3,8 @@
 #include <glm/trigonometric.hpp>
 
 #include "shader.h"
-#include "stb_image.h"
-#include <glad/glad.h>
+#include <stb/stb_image.h>
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -35,8 +35,8 @@ glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 // Mouse
 // ----------------------------
-float lastX = WINDOW_WIDTH / 2;
-float lastY = WINDWO_HEIGHT /2;
+float lastX = WINDOW_WIDTH / 2.0f;
+float lastY = WINDWO_HEIGHT / 2.0f;
 float yaw   = -90.0f;
 float pitch = 0.0f;
 float fov   = 45.0f;
@@ -76,14 +76,14 @@ int main() {
 	// tell glfw to capture mouse input
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+  if (!gladLoadGL((GLADloadfunc)glfwGetProcAddress)) {
     std::cerr << "Faild To Initialize GLAD" << std::endl;
     return -1;
   }
 
   // Build and Compiler Our Shader Program
   // ----------------------------
-  Shader ourShader("../resources/shaders/vertex.vert", "../resources/shaders/fragment.frag");
+  Shader ourShader(RESOURCE_DIR "shaders/vertex.vert", RESOURCE_DIR "shaders/fragment.frag");
   // ----------------------------
 
   // vertex data
@@ -209,7 +209,7 @@ int main() {
   int width, height, nr_channels;
   stbi_set_flip_vertically_on_load(true);
 
-  unsigned char *data = stbi_load("../resources/textures/container.jpg", &width, &height, &nr_channels, 0);
+  unsigned char *data = stbi_load(RESOURCE_DIR "textures/container.jpg", &width, &height, &nr_channels, 0);
   if (data) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -232,7 +232,7 @@ int main() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
   // load image, create texture, generate mipmaps
-  data = stbi_load("../resources/textures/awesomeface.png", &width, &height, &nr_channels, 0);
+  data = stbi_load(RESOURCE_DIR "textures/awesomeface.png", &width, &height, &nr_channels, 0);
   if (data) {
     // note that the awesomeface.png has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -260,7 +260,7 @@ int main() {
     // process input
     process_input(window);
 
-    // render
+    // rende
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -290,7 +290,7 @@ int main() {
 		unsigned int projectionLoc = glGetUniformLocation(ourShader.shader_program, "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-    // render container
+    // render containe
 		unsigned int modelLoc = glGetUniformLocation(ourShader.shader_program, "model");
     glBindVertexArray(VAO);
 		for (unsigned int i{0}; i < 10; i++) {

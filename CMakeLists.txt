@@ -1,64 +1,62 @@
 cmake_minimum_required(VERSION 3.20)
-set(CMAKE_MAKE_PROGRAM "C:/Program Files/Ninja/ninja.exe")
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 project(LearnOpenGL)
-
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include(FetchContent)
+# system packages: sudo pacman -S base-devel cmake ninja glfw glm mesa glad stb
+find_package(glfw3 3.3 REQUIRED)
+find_package(glm REQUIRED)
+find_package(OpenGL REQUIRED)
 
-# Fetch GLFW
-FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY https://github.com/glfw/glfw.git
-    GIT_TAG 3.4
-)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(glfw)
+# glad loader generated from the system glad tool into the build dir (fresh build dir regenerates it)
+find_program(GLAD_TOOL glad)
+if(NOT GLAD_TOOL)
+    message(FATAL_ERROR "glad tool not found (sudo pacman -S glad)")
+endif()
+set(GLAD_OUT ${CMAKE_BINARY_DIR}/generated)
+if(NOT EXISTS ${GLAD_OUT}/include/glad/gl.h)
+    execute_process(
+        COMMAND ${GLAD_TOOL} --api gl:core=3.3 --out-path ${GLAD_OUT} --reproducible --quiet c --loader
+        RESULT_VARIABLE GLAD_RESULT
+    )
+    if(NOT GLAD_RESULT EQUAL 0)
+        message(FATAL_ERROR "glad generation failed")
+    endif()
+endif()
+add_library(glad STATIC ${GLAD_OUT}/src/gl.c)
+target_include_directories(glad PUBLIC ${GLAD_OUT}/include)
 
-# Fetch GLM
-FetchContent_Declare(
-    glm
-    GIT_REPOSITORY https://github.com/g-truc/glm.git
-    GIT_TAG 1.0.1
-)
-FetchContent_MakeAvailable(glm)
-
-# Build GLAD as a static library
-add_library(glad STATIC external/glad/src/glad.c)
-target_include_directories(glad PUBLIC external/glad/include)
-
-# Build stb_image as a static library
-add_library(stb_image STATIC external/stb/stb_image.cpp)
-target_include_directories(stb_image PUBLIC external/stb)
-
-# Helper function to define targets cleanly
+# one exe per lesson; shared code (camera, stb impl) compiles straight in, no extra libs
 function(add_gl_target target_name source_file)
-    add_executable(${target_name} ${source_file})
-
-    # Linked compiled libraries
-    target_link_libraries(${target_name} PRIVATE
-        glfw
-        glad
-        glm
-        stb_image
-        opengl32
+    add_executable(${target_name} ${source_file}
+        ${CMAKE_SOURCE_DIR}/src/common/camera.cpp
+        ${CMAKE_SOURCE_DIR}/src/common/stb_impl.cpp
     )
-
-    # Tell the compiler where to find headers
-    target_include_directories(${target_name} PRIVATE
-        ${CMAKE_BINARY_DIR}/_deps/glm-src
-        ${CMAKE_SOURCE_DIR}/include
-    )
+    target_link_libraries(${target_name} PRIVATE glfw glad glm::glm OpenGL::GL)
+    target_include_directories(${target_name} PRIVATE ${CMAKE_SOURCE_DIR}/include)
+    # absolute resources path so exes run from any working directory:
+    # Shader(RESOURCE_DIR "shaders/x.vert", ...) concatenates two literals
+    file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/resources" _resources_dir)
+    target_compile_definitions(${target_name} PRIVATE "RESOURCE_DIR=\"${_resources_dir}/\"")
+    if(DEFINED CHAPTER_NAME)
+        set_target_properties(${target_name} PROPERTIES
+            OUTPUT_NAME ${target_name}
+            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CHAPTER_NAME}
+        )
+    else()
+        set_target_properties(${target_name} PROPERTIES
+            OUTPUT_NAME ${target_name}
+            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+        )
+    endif()
 endfunction()
 
-# Define your executables
 add_gl_target(LearnOpenGL src/main.cpp)
-add_gl_target(Cube src/1_GettingStarted/cube.cpp)
-add_gl_target(Flat_3D src/1_GettingStarted/flat_3d.cpp)
-add_gl_target(Colors src/2_Lighting/colors.cpp)
+
+add_subdirectory(src/1-getting-started)
+add_subdirectory(src/2-lighting)
+#add_subdirectory(src/3-model-loading)
+#add_subdirectory(src/4-advanced-opengl)
+#add_subdirectory(src/5-advanced-lighting)
+#add_subdirectory(src/6-pbr)
