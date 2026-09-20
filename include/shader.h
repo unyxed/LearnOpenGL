@@ -2,7 +2,7 @@
 #define SHADER_H
 
 #include <glad/gl.h>
-#include <ios>
+#include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -33,7 +33,7 @@ class Shader {
         fragment_shader_sstream << fragment_shader_ifs.rdbuf();
 
         vertex_shader_code   = vertex_shader_sstream.str();
-        fragment_shader_code = fragment_shader_sstream.str(); 
+        fragment_shader_code = fragment_shader_sstream.str();
 
         std::cout << "SUCCESS::SHADER::FILE_READ_SUCCESSFULLY" << std::endl;
 
@@ -42,14 +42,14 @@ class Shader {
       }
 
       const char* vertex_shader_csource_code   = vertex_shader_code.c_str();
-      const char* fragment_shader_csource_code = fragment_shader_code.c_str(); 
+      const char* fragment_shader_csource_code = fragment_shader_code.c_str();
 
       unsigned int vertex_shader, fragment_shader;
 
-      // vertex shader 
+      // vertex shader
       vertex_shader = glCreateShader(GL_VERTEX_SHADER);
       glShaderSource(vertex_shader, 1, &vertex_shader_csource_code, NULL);
-      glCompileShader(vertex_shader); 
+      glCompileShader(vertex_shader);
       checkCompileErrors(vertex_shader, "VERTEX");
 
       // fragment shade
@@ -65,7 +65,7 @@ class Shader {
       glLinkProgram(shader_program);
       checkCompileErrors(shader_program, "PROGRAM");
 
-      // delete vertex and fragment shader 
+      // delete vertex and fragment shader
       glDeleteShader(vertex_shader);
       glDeleteShader(fragment_shader);
     }
