@@ -47,7 +47,7 @@ int main() {
 
   // Build and Compiler Our Shader Program
   // ----------------------------
-  Shader ourShader(RESOURCE_DIR "shaders/vertex.vert", RESOURCE_DIR "shaders/fragment.frag");
+  Shader ourShader(RESOURCE_DIR "shaders/1-getting-started/flat_3d.vert", RESOURCE_DIR "shaders/1-getting-started/flat_3d.frag");
   // ----------------------------
 
   // vertex data

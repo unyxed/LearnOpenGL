@@ -52,10 +52,10 @@ function(add_gl_target target_name source_file)
     endif()
 endfunction()
 
-add_gl_target(LearnOpenGL src/main.cpp)
+#add_gl_target(LearnOpenGL src/main.cpp)
 
 add_subdirectory(src/1-getting-started)
-add_subdirectory(src/2-lighting)
+#add_subdirectory(src/2-lighting)
 #add_subdirectory(src/3-model-loading)
 #add_subdirectory(src/4-advanced-opengl)
 #add_subdirectory(src/5-advanced-lighting)

@@ -47,7 +47,7 @@ int main() {
 
   // Build and Compiler Our Shader Program
   // ----------------------------
-  Shader ourShader(RESOURCE_DIR "shaders/1_getting_started/cube_vertex.vert", RESOURCE_DIR "shaders/1_getting_started/cube_fragment.frag");
+  Shader ourShader(RESOURCE_DIR "shaders/1-getting-started/cube.vert", RESOURCE_DIR "shaders/1-getting-started/cube.frag");
   // ----------------------------
 
   // vertex data

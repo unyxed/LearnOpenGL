@@ -1,4 +1,4 @@
-set(CHAPTER_NAME 1_getting_started)
+set(CHAPTER_NAME 1-getting-started)
 
-add_gl_target(1_getting_started_cube cube.cpp)
-add_gl_target(1_getting_started_flat_3d flat_3d.cpp)
+add_gl_target(1-getting-started-cube cube.cpp)
+add_gl_target(1-getting-started-flat-3d flat_3d.cpp)
