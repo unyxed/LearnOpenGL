@@ -2,7 +2,6 @@
 #define SHADER_H
 
 #include <glad/gl.h>
-#include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>

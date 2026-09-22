@@ -1,0 +1,4 @@
+If:
+    PathMatch: [.*shader\.h, .*camera\.h]
+CompileFlags:
+    Add: [-x, c++-header]
