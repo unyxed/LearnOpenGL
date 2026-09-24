@@ -4,6 +4,14 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Default to Debug if not specified (keeps -g and turns off optimizations)
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose build type" FORCE)
+endif()
+
+# Option to enable AddressSanitizer & UndefinedBehaviorSanitizer
+option(ENABLE_ASAN "Enable AddressSanitizer and UndefinedBehaviorSanitizer" ON)
+
 # system packages: sudo pacman -S base-devel cmake ninja glfw glm mesa glad stb
 find_package(glfw3 3.3 REQUIRED)
 find_package(glm REQUIRED)
@@ -35,10 +43,18 @@ function(add_gl_target target_name source_file)
     )
     target_link_libraries(${target_name} PRIVATE glfw glad glm::glm OpenGL::GL)
     target_include_directories(${target_name} PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+    # Sanitizers for segfault & out-of-bounds detection
+    if(ENABLE_ASAN)
+        target_compile_options(${target_name} PRIVATE -fsanitize=address,undefined -fno-omit-frame-pointer)
+        target_link_options(${target_name} PRIVATE -fsanitize=address,undefined)
+    endif()
+
     # absolute resources path so exes run from any working directory:
     # Shader(RESOURCE_DIR "shaders/x.vert", ...) concatenates two literals
     file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/resources" _resources_dir)
     target_compile_definitions(${target_name} PRIVATE "RESOURCE_DIR=\"${_resources_dir}/\"")
+
     if(DEFINED CHAPTER_NAME)
         set_target_properties(${target_name} PROPERTIES
             OUTPUT_NAME ${target_name}
