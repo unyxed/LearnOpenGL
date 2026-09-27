@@ -1,14 +1,18 @@
 #version 330 core
-layout (location = 0) in vec3 vertex_coordinates;
-layout (location = 1) in vec2 texture2d_coordinates;
 
-out vec2 tex2d_coord;
+/* inputs */
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec2 aTexCoord;
 
+/* matrix uniforms */
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+/* outputs */
+out vec2 TexCoord;
+
 void main() {
-	gl_Position = projection * view * model * vec4(vertex_coordinates, 1.0);
-	tex2d_coord = vec2(texture2d_coordinates.x, texture2d_coordinates.y);
+	gl_Position = projection * view * model * vec4(aPos, 1.0);
+	TexCoord = aTexCoord;
 }
